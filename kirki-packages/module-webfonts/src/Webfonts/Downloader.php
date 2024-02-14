@@ -94,8 +94,8 @@ class Downloader {
 
 			foreach ( $files as $url ) {
 
-				// Get the filename.
-				$filename  = md5($url) . ".woff";
+				// Create a filename.
+				$filename  = md5($url) . ".woff2";
 				$font_path = $folder_path . '/' . $filename;
 
 				if ( file_exists( $font_path ) ) {
