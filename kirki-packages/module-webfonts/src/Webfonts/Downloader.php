@@ -94,8 +94,8 @@ class Downloader {
 
 			foreach ( $files as $url ) {
 
-				// Get the filename.
-				$filename  = basename( wp_parse_url( $url, PHP_URL_PATH ) );
+				// Create a filename.
+				$filename  = md5($url) . ".woff2";
 				$font_path = $folder_path . '/' . $filename;
 
 				if ( file_exists( $font_path ) ) {
