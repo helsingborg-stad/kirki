@@ -20,8 +20,6 @@ controls/scss/ export-ignore
 *.sh export-ignore
 codacy.yml export-ignore
 CODE_OF_CONDUCT.md export-ignore
-composer.json export-ignore
-composer.lock export-ignore
 Gruntfile.js export-ignore
 package.json export-ignore
 kirki-composer/**/installed.json export-ignore
