@@ -1,8 +1,8 @@
 <?php return array(
     'root' => array(
         'name' => 'helsingborg-stad/kirki',
-        'pretty_version' => '5.0.2',
-        'version' => '5.0.2.0',
+        'pretty_version' => '5.0.3',
+        'version' => '5.0.3.0',
         'reference' => null,
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
@@ -29,8 +29,8 @@
             'dev_requirement' => true,
         ),
         'helsingborg-stad/kirki' => array(
-            'pretty_version' => '5.0.2',
-            'version' => '5.0.2.0',
+            'pretty_version' => '5.0.3',
+            'version' => '5.0.3.0',
             'reference' => null,
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
