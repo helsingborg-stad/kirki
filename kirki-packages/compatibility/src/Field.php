@@ -240,6 +240,13 @@ class Field {
 	 */
 	protected $partial_refresh = array();
 
+	/*  These are set, but could not find documentation 
+			Objective: If found. Get types, and set them to the class properties.
+
+			protected $compiler = '';
+			protected $gutenberg_support = true;
+	*/  
+
 	/**
 	 * The class constructor.
 	 * Parses and sanitizes all field arguments.
@@ -302,7 +309,9 @@ class Field {
 
 		// Set the class properties using the parsed args.
 		foreach ( $args as $key => $value ) {
-			$this->$key = $value;
+			if(isset($this->$key)) {
+				$this->$key = $value;
+			}
 		}
 
 		$this->args = $args;
