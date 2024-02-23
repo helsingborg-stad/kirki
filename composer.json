@@ -1,6 +1,6 @@
 {
     "name": "helsingborg-stad/kirki",
-    "type": "library",
+    "type": "wordpress-muplugin",
     "version": "5.0.3",
     "keywords": [
         "WordPress",
