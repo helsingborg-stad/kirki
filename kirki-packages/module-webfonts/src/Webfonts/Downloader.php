@@ -67,14 +67,6 @@ class Downloader {
 		$font_files = $this->get_files_from_css( $css );
 		$stored     = get_option( 'kirki_downloaded_font_files', array() );
 
-		// Note: This is a fix, to enshure that previously
-		// badly stored values are deleted.
-		// May be safly removed in the future.
-		if( !is_array($stored) ) {
-			delete_option( 'kirki_downloaded_font_files' ); 
-			$stored = array();
-		}
-
 		$change     = false; // If in the end this is true, we need to update the cache option.
 
 		// If the fonts folder don't exist, create it.
@@ -84,57 +76,86 @@ class Downloader {
 
 		foreach ( $font_files as $font_family => $files ) {
 
-			// The folder path for this font-family.
-			$folder_path = WP_CONTENT_DIR . '/fonts/' . $font_family;
-
-			// If the folder doesn't exist, create it.
-			if ( ! file_exists( $folder_path ) ) {
-				$this->get_filesystem()->mkdir( $folder_path, FS_CHMOD_DIR );
-			}
+			$folder_path = $this->create_local_font_family_directory($font_family);
 
 			foreach ( $files as $url ) {
 
 				// Create a filename.
-				$filename  = md5($url) . ".woff2";
+				$filename  = md5($url) . ".woff";
 				$font_path = $folder_path . '/' . $filename;
 
-				if ( file_exists( $font_path ) ) {
-
-					// Skip if already cached.
-					if ( isset( $stored[ $url ] ) ) {
-						continue;
+				if( !file_exists($font_path) ) {
+					$tmp_path = $this->download_remote_font_file($url);
+					if($tmp_path != false && file_exists($tmp_path)) {
+						$this->get_filesystem()->move( $tmp_path, $font_path, true ); 
 					}
+				}
 
+				if( file_exists($font_path) ) {
 					$stored[ $url ] = $font_path;
 					$change         = true;
 				}
 
-				if ( ! function_exists( 'download_url' ) ) {
-					require_once wp_normalize_path( ABSPATH . '/wp-admin/includes/file.php' );
-				}
-
-				// Download file to temporary location.
-				$tmp_path = download_url( $url );
-
-				// Make sure there were no errors.
-				if ( is_wp_error( $tmp_path ) ) {
-					continue;
-				}
-
-				// Move temp file to final destination.
-				$success = $this->get_filesystem()->move( $tmp_path, $font_path, true );
-				if ( $success ) {
-					$stored[ $url ] = $font_path;
-					$change         = true;
-				}
 			}
 		}
 
 		if ( $change && is_array( $stored ) && !empty( $stored ) ) {
-			update_option( 'kirki_downloaded_font_files', $stored );
+			update_option( 
+				'kirki_downloaded_font_files',
+				array_filter($stored, 'file_exists') ?? []
+			);
 		}
 
 		return $stored;
+	}
+
+	/**
+	 * Creates a local font family directory.
+	 *
+	 * This function creates a directory for a specific font family in the WP_CONTENT_DIR/fonts directory.
+	 * If the directory doesn't exist, it will be created using the WordPress filesystem API.
+	 *
+	 * @access private
+	 * @since 5.1.1
+	 * @param string $font_family The font family name.
+	 * @return string The folder path for the font family.
+	 */
+	private function create_local_font_family_directory($font_family) {
+		
+		// The folder path for this font-family.
+		$folder_path = WP_CONTENT_DIR . '/fonts/' . $font_family;
+
+		// If the folder doesn't exist, create it.
+		if ( ! file_exists( $folder_path ) ) {
+			$this->get_filesystem()->mkdir( $folder_path, FS_CHMOD_DIR );
+		}
+
+		return $folder_path;
+	}
+	
+	/**
+	 * Downloads a remote font file from the given URL.
+	 * @access private
+	 * @since 5.1.1
+	 * @param string $url The URL of the font file to download.
+	 * @return string|false The path to the downloaded font file, or false if there was an error.
+	 */
+	private function download_remote_font_file($url) {
+		
+		// Include relevant files for download_url
+		if ( ! function_exists( 'download_url' ) ) {
+			require_once wp_normalize_path( ABSPATH . '/wp-admin/includes/file.php' );
+		}
+
+		// Download file to temporary location.
+		$tmp_path = download_url( $url );
+
+		// Make sure there were no errors.
+		if ( is_wp_error( $tmp_path ) ) {
+			return false;
+		}
+
+		return $tmp_path;
 	}
 
 	/**
