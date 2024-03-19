@@ -243,9 +243,16 @@ class Field {
 	/*  These are set, but could not find documentation 
 			Objective: If found. Get types, and set them to the class properties.
 
-			protected $compiler = '';
-			protected $gutenberg_support = true;
+			If removed. PHP 8+ will throw an error:
+
+			Deprecated: Creation of dynamic property Kirki\Field\Repeater::$compiler 
+			is deprecated in /kirki/kirki-packages/compatibility/src/Field.php on line 305
+
+			Deprecated: Creation of dynamic property Kirki\Field\Repeater::$gutenberg_support 
+			is deprecated in /kirki/kirki-packages/compatibility/src/Field.php on line 305
 	*/  
+	protected $compiler = '';
+	protected $gutenberg_support = true;
 
 	/**
 	 * The class constructor.
