@@ -37,7 +37,8 @@ import "./control.scss";
       );
 
       [].slice.call(tabItems).forEach(function (tabItem) {
-        if (tabItem.dataset.kirkiParentTabItem === tabItemName) {
+        const tabsToShowOn = tabItem.dataset.kirkiParentTabItem.split(",");
+        if (tabsToShowOn.length > 0 && tabsToShowOn.includes(tabItemName)) {
           tabItem.classList.remove("kirki-tab-item-hidden");
         } else {
           tabItem.classList.add("kirki-tab-item-hidden");
